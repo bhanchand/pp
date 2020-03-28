@@ -1,0 +1,74 @@
+{% extends "_template.html" %}
+{% block title %}{{site_config.current_title}}{% endblock %}
+{% block banner %}
+      <!-- breadcrumb start -->
+      <!-- ================ -->
+      <div class="breadcrumb-container">
+        <div class="container">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><i class="fa fa-home pr-2"></i><a class="link-dark" href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Activating Account</li>
+          </ol>
+        </div>
+      </div>
+      <!-- breadcrumb end -->
+{% endblock %}
+{% block content %}
+      <!-- main-container start -->
+      <!-- ================ -->
+      <div class="main-container dark-translucent-bg" style="background-image:url('https://cdn.static-patient-portal.recintodev.com/images/background-img-6.jpg');">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-auto">
+              <!-- main start -->
+              <!-- ================ -->
+              <div class="main hc-element-invisible" data-animation-effect="fadeInUpSmall" data-effect-delay="100">
+                <div class="form-block p-30 light-gray-bg border-clear">
+                    Activating Account...
+                </div>
+              </div>
+              <!-- main end -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- main-container end -->
+{% endblock %}
+{% block extra_script %}
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function() {
+    console.log("Ready!!!");
+
+    oktaSignIn.authClient.session.get()
+      .then(function(session) {
+        // Session exists, show logged in state.
+        if (session.status === 'ACTIVE') {
+          // showApp()
+          console.log("Session Active");
+          oktaSignIn.authClient.closeSession()
+            .then(() => {
+                // The user is now logged out.
+                location.href = "/activate/{{user_id}}";
+            })
+            .catch(e => {
+                if (e.xhr && e.xhr.status === 429) {
+                    // Too many requests
+                    console.log("Failed to close the session (if it exsists) otherwise fine");
+                    console.log(err);
+                }
+            })
+
+        } else if (session.status === 'INACTIVE') {
+          console.log("Session Not Active");
+          location.href = "/activate/{{user_id}}";
+        }
+      })
+      .catch(function(err) {
+        console.log("Failed to retrive session: ");
+        console.log(err);
+      });
+});
+//]]>
+</script>
+{% endblock %}
